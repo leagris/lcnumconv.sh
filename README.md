@@ -18,7 +18,7 @@ See:
 * [The WTFPL website](http://www.wtfpl.net/)
 * [LICENSE.md](LICENSE.md)
 
-### Incentives behind `lcnumconv`
+### Incentives behind `lcnumconv.sh`
 
 It has been created to work-around a specific behavior of the `%f` format code with the Bash's built-in `printf` command, witch expects floating-point numbers arguments to be formatted accordingly to the environment variable `$LC_NUMERIC`; thus diverging from the GNU Coreutils's stand-alone `printf`'s  behavior, witch expects `POSIX` locale formatted floating-point numbers for arguments, regardless of the print-out format, using the environment variable `$LC_NUMERIC`; as one would want to control the print-out locale numeric format while internally storing, processing and exchanging values with other processes or sub-systems by using the universally compatible and portable `POSIX` locale numeric format. 
 
