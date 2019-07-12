@@ -1,6 +1,6 @@
 # lcnumconv.sh
 
-`lcnumconv.sh` is a Bash library and stand-alone command to convert numbers between `LC_NUMERIC` locale formats
+`lcnumconv.sh` is a Bash library and stand-alone command to convert numbers between `LC_NUMERIC` locale formats.
 
 ### License
 
