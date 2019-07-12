@@ -41,7 +41,7 @@ See the related [Bash's bug report here](https://lists.gnu.org/archive/html/bug-
 You can clone the repository or download the library file only with `wget`:
 
 ```Bash
-wget -qO https://raw.githubusercontent.com/leagris/lcnumconv.sh/lcnumconv.sh
+wget -qO lcnumconv.sh -- https://raw.githubusercontent.com/leagris/lcnumconv.sh/master/lcnumconv.sh
 ```
 
 If you want it available in the system `$PATH`, you can install it with:
