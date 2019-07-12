@@ -9,9 +9,9 @@
     - [Downloading](#downloading)
   - [Usage](#usage)
   - [Sample usages](#sample-usages)
-    - [As a stand-alone tool](as-a-stand-alone-tool)
-    - [As a library inside a Bash script](as-a-library-inside-a-bash-script)
-    - [Running the library sample](running-the-library-sample)
+    - [As a stand-alone tool](#as-a-stand-alone-tool)
+    - [As a library inside a Bash script](#as-a-library-inside-a-bash-script)
+    - [Running the library sample](#running-the-library-sample)
     
 <!-- /MarkdownTOC -->
 
