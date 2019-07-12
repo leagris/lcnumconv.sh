@@ -15,7 +15,7 @@ You can redistribute it and, or modify it under the terms of the
 **Do What The Fuck You Want To Public License, Version 2**, as published by Sam Hocevar.
 
 See:
-* [The WTFPL website](http://www.wtfpl.net/(
+* [The WTFPL website](http://www.wtfpl.net/)
 * [LICENSE.md](LICENSE.md)
 
 ### Incentives behind `lcnumconv`
