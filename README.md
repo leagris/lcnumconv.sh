@@ -1,12 +1,30 @@
-# lcnumconv.sh
+## Table of content
+
+<!-- MarkdownTOC -->
+- [lcnumconv.sh](#lcnumconvsh)  
+  - [License](#license)  
+    - [This program is free software](#this-program-is-free-software)
+  - [Incentives behind `lcnumconv.sh`](#incentives-behind-lcnumconvsh)
+  - [Installation](#installation)
+    - [Downloading](#downloading)
+  - [Usage](#usage)
+  - [Sample usages](#sample-usages)
+    - [As a stand-alone tool](as-a-stand-alone-tool)
+    - [As a library inside a Bash script](as-a-library-inside-a-bash-script)
+    - [Running the library sample](running-the-library-sample)
+    
+<!-- /MarkdownTOC -->
+
+
+## lcnumconv.sh
 
 `lcnumconv.sh` is a Bash library and stand-alone command to convert numbers between `LC_NUMERIC` locale formats.
 
 ### License
 
-![WTFPL License badge](http://www.wtfpl.net/wp-content/uploads/2012/12/wtfpl-badge-1.png)
+[![WTFPL License badge](http://www.wtfpl.net/wp-content/uploads/2012/12/wtfpl-badge-1.png)](http://www.wtfpl.net/)
 
-#### This program is free software.
+#### This program is free software
 
 It comes without any warranty, to the extent permitted by applicable law.
 
@@ -36,7 +54,7 @@ See the related [Bash's bug report here](https://lists.gnu.org/archive/html/bug-
 
 ### Installation
 
-#### Download the library file with:
+#### Downloading
 
 You can clone the repository or download the library file only with `wget`:
 
