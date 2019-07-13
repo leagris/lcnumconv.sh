@@ -8,7 +8,7 @@ EOF
 )"
 lcnumconv_author='Copyright © 2019 Léa Gris <lea.gris@noiraude.net>'
 lcnumconv_date='Date Wed, 10 Jul 2019'
-lcnumconv_version='1.2.1'
+lcnumconv_version='1.2.2'
 lcnumconv_license="$(
   cat <<EOF
 This program is free software.
@@ -24,34 +24,40 @@ lcnumconv::l2l() {
   # $2: The destination locale
   # $@|<&1: The numbers to convert
   # >&1: The converted numbers
-  (($# < 2)) && return 1
+  if [[ $# -lt 2 ]]; then
+    printf >&2 'Missing locales parameters\n'
+    return 1
+  fi
 
   local -r in_lc="${1}"
-  lcnumconv::lck "${in_lc}" || {
+  if ! lcnumconv::lck "${in_lc}"; then
     printf >&2 'The source locale %s is not available to this system.\n' \
       "${in_lc}"
     return 3
-  }
+  fi
   shift
 
   local -r out_lc="${1}"
-  lcnumconv::lck "${out_lc}" || {
+  if ! lcnumconv::lck "${out_lc}"; then
     printf >&2 'The destination locale %s is not available to this system.\n' \
       "${out_lc}"
     return 3
-  }
+  fi
   shift
 
   # If no number in arguments, stream stdin as arguments
-  ! (($#)) && {
+  if [[ $# -eq 0 ]]; then
     local -a args=()
     while IFS= read -r line || [[ $line ]]; do
       args+=("${line}")
     done
     set -- "${args[@]}"
-  }
+  fi
 
-  ! (($#)) && return 2 # No number to convert
+  if [[ $# -eq 0 ]]; then
+    printf >&2 'No number to convert\n'
+    return 2
+  fi
 
   local -- \
     in_decimal_point \
@@ -86,7 +92,7 @@ lcnumconv::l2p() {
 # shellcheck disable=SC2120 # Needs no argument when streamed
 lcnumconv::p2l() {
   # Convert numbers from POSIX locale to $LC_NUMERIC
-  # $@: The numbers to convert or read from stdin
+  # $@|<&1: The numbers to convert
   # >&1: The converted numbers
   lcnumconv::l2l POSIX "${LC_NUMERIC}" "${@}"
 }
@@ -95,7 +101,7 @@ lcnumconv::lck() {
   # Check if a given locale is known to the system
   # $1: The locale to check (example: en_US.utf8)
   # $?: 0=true, 1=false
-  [[ ! "$({ LC_ALL="${1}"; } 2>&1)" ]]
+  [[ -z "$({ LC_ALL="${1}"; } 2>&1)" ]]
 }
 
 ### It is safe to remove everything from here if you only need the library
@@ -223,5 +229,5 @@ EOF
   fi
 
   lcnumconv::l2l "${__opt_from_lc}" "${__opt_to_lc}" "${@}"
-  exit $?
+  exit "${?}"
 )
