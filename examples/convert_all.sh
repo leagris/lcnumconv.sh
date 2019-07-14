@@ -8,7 +8,10 @@
 # in arbitrary locale and print-out format with Bash's
 # built-in printf into another arbitrary numeric locale
 
-source ../lcnumconv.sh
+if ! source ../lcnumconv.sh; then
+  echo >&2 $"Require the lcnumconv.sh library"
+  exit 2
+fi
 
 # Create and populate variables from the LC_NUMERIC locale:
 # decimal_point
@@ -54,48 +57,50 @@ printf -v numeric_decimal_point_wc '%d' "'${decimal_point}"
 # shellcheck disable=SC2154 # generated from locale
 printf -v numeric_thousands_sep_wc '%d' "'${thousands_sep}"
 
-# If there is a thousands separator, prepare a digit_group_information
+# If there is a thousands separator, prepare a digits_group_information
 if [[ ${numeric_thousands_sep_wc} -gt 0 ]]; then
 
   # Compose the character-set and the code value of the thausands separator
-  if [[ ${numeric_thousands_sep_wc} -le 255 ]]; then
+  if [[ ${numeric_thousands_sep_wc} -lt 256 ]]; then
     # shellcheck disable=SC2154 # generated from locale
-    sep_unit_value="$(printf '%s %d' "${numeric_codeset}" "${numeric_thousands_sep_wc}")"
+    printf -v sep_unit_value '%s %d' "${numeric_codeset}" "${numeric_thousands_sep_wc}"
   else
-    sep_unit_value="$(printf '%s U+%04X' "${numeric_codeset}" "${numeric_thousands_sep_wc}")"
+    printf -v sep_unit_value '%s U+%04X' "${numeric_codeset}" "${numeric_thousands_sep_wc}"
   fi
 
-  digit_group_info="$(
-    cat <<EOF
-
-Digits groups may be separated by the '${thousands_sep}' character,
-wich is also known as: ${sep_unit_value}.
-EOF
-  )"
+  printf -v digits_group_info $"
+Digits groups may be separated by the '%s' character,
+wich is also known as: %s.
+" \
+  "${thousands_sep}" \
+  "${sep_unit_value}"
 else
-  digit_group_info=''
+  digits_group_info=''
 fi
 
 # Print the deatils of the LC_NUMERIC locale settings
-cat <<EOF
-The current numeric locale setting is:
-LC_NUMERIC=${LC_NUMERIC}
+printf $"The current numeric locale setting is:
+LC_NUMERIC=%s
 
-This host defines the folloiwng numeric format settings for the ${LC_NUMERIC} locale:
-$(locale -k LC_NUMERIC)
-${digit_group_info}
-EOF
+This host defines the folloiwng numeric format settings for the %s locale:
+%s
+%s
+" \
+  "${LC_NUMERIC}" \
+  "${LC_NUMERIC}" \
+  "$(locale -k LC_NUMERIC)" \
+  "${digits_group_info}"
 
 # Ask for a floating-point number formatted in current locale
-read -r -p "Please enter a floating-point number in your ${LC_NUMERIC} format:"$'\n' locale_float
+read -r -p $"Please enter a floating-point number in your ${LC_NUMERIC} format:"$'\n' locale_float
 
 # Print a table of host locales and number formatted to these locales
 
 # Columns headers
-printf '\n\n%-31s %-40s\n' 'Locales known to host' 'Number formatted to locale'
+printf '\n\n%-31s %-40s\n' $"Locales known to host" $"Number formatted to locale"
 
 # Make string of 72 spaces
-hl="$(printf '%-72s' '')"
+printf -v hl '%-72s' ''
 
 # Print a line of 72 dashes
 printf '%s\n' "${hl// /-}"
