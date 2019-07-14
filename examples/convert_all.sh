@@ -11,26 +11,42 @@
 source ../lcnumconv.sh
 
 # Read some LC_NUMERIC locale settings for our own fancy use
-IFS=$'\n' read -r -d '' _ thousands_sep _ _ sep_wc codeset < <(locale LC_NUMERIC)
+while IFS=$'\n=' read -r k v; do
+  k="${k//-/_}"
+  v="${v#\"}"
+  v="${v%\"}"
+  declare "${k}=${v}"
+done < <(locale -k LC_NUMERIC)
 
-# Compose the character-set and the code value of the thausands separator
-if ((sep_wc < 255)); then
-  sep_unit_value="$(printf '%s %d' "${codeset}" "${sep_wc}")"
+# If there is a thousands separator, prepare a digit_group_information
+if [[ ${numeric_thousands_sep_wc} -gt 0 ]]; then
+
+  # Compose the character-set and the code value of the thausands separator
+  if [[ ${numeric_thousands_sep_wc} -lt 255 ]]; then
+    sep_unit_value="$(printf '%s %d' "${numeric_codeset}" "${numeric_thousands_sep_wc}")"
+  else
+    sep_unit_value="$(printf '%s U+%04X' "${numeric_codeset}" "${numeric_thousands_sep_wc}")"
+  fi
+
+  digit_group_info="$(
+    cat <<EOF
+
+Digits groups may be separated by the '${thousands_sep}' character,
+wich is also known as: ${sep_unit_value}.
+EOF
+  )"
 else
-  sep_unit_value="$(printf '%s U+%04X' "${codeset}" "${sep_wc}")"
+  digit_group_info=''
 fi
 
-# Print detailed informations about the current LC_NUMERIC locale settings
+# Print the deatils of the LC_NUMERIC locale settings
 cat <<EOF
 The current numeric locale setting is:
 LC_NUMERIC=${LC_NUMERIC}
 
 This host defines the folloiwng numeric format settings for the ${LC_NUMERIC} locale:
 $(locale -k LC_NUMERIC)
-
-Digits groups may be separated by the '${thousands_sep}' character,
-wich is also known as: ${sep_unit_value}.
-
+${digit_group_info}
 EOF
 
 # Ask for a floating-point number formatted in current locale
