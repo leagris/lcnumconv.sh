@@ -10,19 +10,56 @@
 
 source ../lcnumconv.sh
 
-# Read some LC_NUMERIC locale settings for our own fancy use
-while IFS=$'\n=' read -r k v; do
-  k="${k//-/_}"
-  v="${v#\"}"
-  v="${v%\"}"
-  declare "${k}=${v}"
-done < <(locale -k LC_NUMERIC)
+# Create and populate variables from the LC_NUMERIC locale:
+# decimal_point
+# thousands_sep
+# grouping
+# numeric_decimal_point_wc
+# numeric_thousands_sep_wc
+# numeric_codeset
+
+while IFS=$'\n=' read -r locale_key locale_value; do
+  var_name="${locale_key//-/_}"  # Translate key to valid variable name
+  var_value="${locale_value#\"}" # Strip any leading quote from value
+  var_value="${var_value%\"}"    # Strip any trailing quote from value
+  printf -v "${var_name}" '%s' "${var_value}"
+done < <(
+  locale \
+    --keyword-name \
+    LC_NUMERIC
+) # from key=value pairs in the LC_NUMERIC locale category
+
+# Work-around a GLibC locale definition files bug
+# Locale definition files are referrencing a raw chaset
+# numeric value wich is copied verbatim into other
+# charsets, regardless of the actual character and
+# numerical value used for the destination locale's charset.
+# Example:
+# LC_NUMERIC=fr_FR.iso88591 locale -k numeric-thousands-sep-wc
+# returns: numeric-thousands-sep-wc=8239
+# wich is the numeric value of the Unicode Character:
+# 'NARROW NO-BREAK SPACE' (U+202F)
+# verbatim copied from the fr_FR locale definition that is
+# referrencing the Unicode value for the thousands_sep key
+# https://sourceware.org/git/?p=glibc.git;a=blob;f=localedata/locales/fr_FR;h=a18c514f1921fed0049d3b769c95c9e0f864fb2f;hb=HEAD#l97
+# rather-than the correct character in the thousands_sep key,
+# the iso-8859-1 charset, actually is:
+# 'NO-BREAK SPACE' (U+00A0)
+# so the numeric-thousands-sep-wc key=value pair should be:
+# numeric-thousands-sep-wc=160 instead
+
+# Re-inject the correct character value in the bugged entries
+# shellcheck disable=SC2034,SC2154 # generated from locale
+printf -v numeric_decimal_point_wc '%d' "'${decimal_point}"
+# shellcheck disable=SC2154 # generated from locale
+printf -v numeric_thousands_sep_wc '%d' "'${thousands_sep}"
 
 # If there is a thousands separator, prepare a digit_group_information
 if [[ ${numeric_thousands_sep_wc} -gt 0 ]]; then
 
   # Compose the character-set and the code value of the thausands separator
   if [[ ${numeric_thousands_sep_wc} -lt 255 ]]; then
+    # shellcheck disable=SC2154 # generated from locale
     sep_unit_value="$(printf '%s %d' "${numeric_codeset}" "${numeric_thousands_sep_wc}")"
   else
     sep_unit_value="$(printf '%s U+%04X' "${numeric_codeset}" "${numeric_thousands_sep_wc}")"
