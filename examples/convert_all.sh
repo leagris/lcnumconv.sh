@@ -58,7 +58,7 @@ printf -v numeric_thousands_sep_wc '%d' "'${thousands_sep}"
 if [[ ${numeric_thousands_sep_wc} -gt 0 ]]; then
 
   # Compose the character-set and the code value of the thausands separator
-  if [[ ${numeric_thousands_sep_wc} -lt 255 ]]; then
+  if [[ ${numeric_thousands_sep_wc} -le 255 ]]; then
     # shellcheck disable=SC2154 # generated from locale
     sep_unit_value="$(printf '%s %d' "${numeric_codeset}" "${numeric_thousands_sep_wc}")"
   else
