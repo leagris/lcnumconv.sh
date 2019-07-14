@@ -11,7 +11,7 @@
 source ../lcnumconv.sh
 
 # Read some LC_NUMERIC locale settings for our own fancy use
-read -r -d '' _ thousands_sep _ _ sep_wc codeset < <(locale LC_NUMERIC)
+IFS=$'\n' read -r -d '' _ thousands_sep _ _ sep_wc codeset < <(locale LC_NUMERIC)
 
 # Compose the character-set and the code value of the thausands separator
 if ((sep_wc < 255)); then
