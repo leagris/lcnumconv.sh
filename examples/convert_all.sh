@@ -33,7 +33,7 @@ done < <(
 ) # from key=value pairs in the LC_NUMERIC locale category
 
 # Work-around a GLibC locale definition files bug
-# Locale definition files are referrencing a raw chaset
+# Locale definition files are referrencing a raw charset
 # numeric value wich is copied verbatim into other
 # charsets, regardless of the actual character and
 # numerical value used for the destination locale's charset.
