@@ -8,47 +8,38 @@
 # in arbitrary locale and print-out format with Bash's
 # built-in printf into another arbitrary numeric locale
 
-if ! ../source lcnumconv.sh; then
+if ! source ../lcnumconv.sh; then
   echo >&2 $"Require the lcnumconv.sh library"
   exit 2
 fi
 
-# Create and populate variables from the LC_NUMERIC locale:
-# decimal_point
-# thousands_sep
-# grouping
-# numeric_decimal_point_wc
-# numeric_thousands_sep_wc
-# numeric_codeset
+# Populate variables from the LC_NUMERIC locale:
+{
+  read -r _ # skip decimal_point
+  read -r thousands_sep
+  read -r _ # skip grouping
+  read -r _ # skip numeric_decimal_point_wc
+  read -r _ # skip numeric_thousands_sep_wc
+  read -r numeric_codeset
+} < <(locale LC_NUMERIC) # values list in the LC_NUMERIC locale category
 
-while IFS=$'\n=' read -r locale_key locale_value; do
-  var_name="${locale_key//-/_}"  # Translate key to valid variable name
-  var_value="${locale_value#\"}" # Strip any leading quote from value
-  var_value="${var_value%\"}"    # Strip any trailing quote from value
-  printf -v "${var_name}" '%s' "${var_value}"
-done < <(
-  locale \
-    --keyword-name \
-    LC_NUMERIC
-) # from key=value pairs in the LC_NUMERIC locale category
-
-# Collect the actual characters codes
-# shellcheck disable=SC2034,SC2154 # generated from locale
-printf -v numeric_decimal_point_c '%d' "'${decimal_point}"
-# shellcheck disable=SC2154 # generated from locale
+# Collect the actual character code
+# as numeric_thousands_sep_wc is always Unicode
+# and may not match the actual numeric_codeset
 printf -v numeric_thousands_sep_c '%d' "'${thousands_sep}"
 
 # If there is a thousands separator, prepare a digits_group_information
 if [[ ${numeric_thousands_sep_c} -gt 0 ]]; then
 
   # Compose the character-set and the code value of the thausands separator
-  if [[ ${numeric_thousands_sep_c} -lt 256 ]]; then
+  if [[ ${numeric_thousands_sep_c} -le 255 ]]; then
     # shellcheck disable=SC2154 # generated from locale
     printf -v sep_unit_value '%s %d' "${numeric_codeset}" "${numeric_thousands_sep_c}"
   else
     printf -v sep_unit_value '%s U+%04X' "${numeric_codeset}" "${numeric_thousands_sep_c}"
   fi
 
+  # Compose an information about grouping digits
   printf -v digits_group_info $"
 Digits groups may be separated by the '%s' character,
 wich is also known as: %s.
