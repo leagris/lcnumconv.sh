@@ -32,11 +32,10 @@ printf -v numeric_thousands_sep_c '%d' "'${thousands_sep}"
 if [[ ${numeric_thousands_sep_c} -gt 0 ]]; then
 
   # Compose the character-set and the code value of the thausands separator
-  if [[ ${numeric_thousands_sep_c} -le 255 ]]; then
-    # shellcheck disable=SC2154 # generated from locale
-    printf -v sep_unit_value '%s %d' "${numeric_codeset}" "${numeric_thousands_sep_c}"
-  else
+  if ((numeric_thousands_sep_c >> 8)); then
     printf -v sep_unit_value '%s U+%04X' "${numeric_codeset}" "${numeric_thousands_sep_c}"
+  else
+    printf -v sep_unit_value '%s %d' "${numeric_codeset}" "${numeric_thousands_sep_c}"
   fi
 
   # Compose an information about grouping digits
