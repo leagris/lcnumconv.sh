@@ -1,3 +1,5 @@
+[![CodeFactor](https://www.codefactor.io/repository/github/leagris/lcnumconv.sh/badge)](https://www.codefactor.io/repository/github/leagris/lcnumconv.sh)
+
 ## Table of content
 
 <!-- MarkdownTOC -->
