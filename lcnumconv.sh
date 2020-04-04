@@ -1,23 +1,21 @@
 #!/usr/bin/env bash
 # lcnumconv
-lcnumconv_description="$(
-  cat <<EOF
+read -r lcnumconv_description <<EOF
 lcnumconv.sh is a Bash library and a stand-alone command
 for numbers format conversion between locales.
 EOF
-)"
+
 lcnumconv_author='Copyright © 2019 Léa Gris <lea.gris@noiraude.net>'
-lcnumconv_date='Date Wed, 10 Jul 2019'
-lcnumconv_version='1.2.2'
-lcnumconv_license="$(
-  cat <<EOF
+lcnumconv_date='Sat, 04 Apr 2020'
+lcnumconv_version='1.2.3'
+read -r lcnumconv_license <<EOF
 This program is free software.
 It comes without any warranty, to the extent permitted by applicable law.
 You can redistribute it and/or modify it under the terms of the Do What
 The Fuck You Want To Public License, Version 2, as published by Sam Hocevar.
 See: http://www.wtfpl.net/ for more details.
 EOF
-)"
+
 lcnumconv::l2l() {
   # Convert numbers from the source locale to the destination locale
   # $1: The source locale
